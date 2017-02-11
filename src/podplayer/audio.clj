@@ -20,7 +20,7 @@
     (as-struct process)))
 
 (defn play-file [file]
-  (spawn "mplayer" "/home/mattyw/Videos/channel/snappy-lxd-juju/demo.mp3"))
+  (spawn "mplayer" file))
 
 (defn stop [process]
   (.destroy (:process process)))

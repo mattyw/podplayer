@@ -10,4 +10,5 @@
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [org.clojars.beppu/clj-audio "0.3.0"]
+                        [org.clojars.freemarmoset/feedparser-clj "0.6.1"]
                         [ring/ring-mock "0.3.0"]]}})
