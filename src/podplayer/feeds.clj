@@ -26,10 +26,6 @@
 (defn entries [feed]
   (map feed-entry (:entries feed)))
 
-
-
-(def a (first (fetch-feeds)))
-
 (defn feed [f]
     {:title (:title f)
      :entries (entries f)})
@@ -37,5 +33,16 @@
 (defn titles [feeds]
     (map :title feeds))
 
-(titles (fetch-feeds))
-(titles (entries a))
+(defn as-map [feeds]
+  (zipmap (titles feeds) feeds))
+
+(defn get-episode [feeds feed-name episode]
+  (let [feed (get (as-map feeds) feed-name)]
+    (:value (get (zipmap (titles (entries feed)) (entries feed)) episode))))
+
+(get-episode (fetch-feeds) "Cave Comedy RadioThe Last Podcast on the Left – Cave Comedy Radio" "The Puerto Rican Chupacabra")
+
+;(titles (fetch-feeds))
+;(titles (entries a))
+;(def feed-map (as-map (fetch-feeds)))
+;(titles (entries (get feed-map "Go Time")))
