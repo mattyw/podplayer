@@ -42,7 +42,18 @@
 
 (get-episode (fetch-feeds) "Cave Comedy RadioThe Last Podcast on the Left – Cave Comedy Radio" "The Puerto Rican Chupacabra")
 
-;(titles (fetch-feeds))
+; new-episode returns an episode map given a parsed rss feed.
+(defn new-episode [episode]
+  {:title (:title episode) :description (get-in episode [:description :value]) :file (:url (first (:enclosures episode)))})
+
+(defn new-episodes [feed]
+  {:title (:title feed) :episodes (map new-episode (:entries feed))})
+
+
+(def got (first (fetch-feeds)))
+(clojure.pprint/pprint (first (:entries got)))
+(clojure.pprint/pprint (new-episodes got))
+(clojure.pprint/pprint (feed-entries (first (fetch-feeds))))
 ;(titles (entries a))
 ;(def feed-map (as-map (fetch-feeds)))
 ;(titles (entries (get feed-map "Go Time")))
