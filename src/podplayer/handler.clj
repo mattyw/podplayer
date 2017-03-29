@@ -5,20 +5,19 @@
             [hiccup.core :as hiccup]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
-(def all-feeds (fetch-feeds))
-(def feed-map (as-map all-feeds))
-
 (defn home-view []
   (hiccup/html
-    (for [x (titles all-feeds)] [:p [:a {:href (str "feed/" x)} x]])))
+    (for [x (list-titles)] [:p [:a {:href (str "feed/" x)} x]])))
 
 (defn feed-view [title]
-  (let [items (titles (entries (get feed-map title)))]
+  (let [episodes (get-episodes title)]
     (hiccup/html
-      (for [x items] [:p [:a {:href (str title "/entry/" x)} x]]))))
+      (for [x episodes] 
+        [:p [:h1 (:title x)]
+          [:a {:href (:file x)} "Play Episode"]
+          [:p (:description x)]]))))
 
-(defn entry-view [title episode]
-    (get-episode all-feeds title episode))
+(defn entry-view [title episode] "entry")
 
 (defroutes app-routes
   (GET "/" [] (home-view))
