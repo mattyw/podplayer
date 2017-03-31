@@ -25,8 +25,8 @@
 (defroutes app-routes
   (GET "/" [] (home-view))
   (GET "/feed/:title" [title] (feed-view title))
-  (GET "/play" [file] (play-file file))
-  (GET "/stop" [] (stop))
+  (GET "/play" [file] (play-audio file))
+  (GET "/stop" [] (stop-audio))
   (route/not-found "Not Found"))
 
 (def app
