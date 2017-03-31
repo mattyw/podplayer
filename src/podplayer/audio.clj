@@ -2,6 +2,8 @@
   (:use [clojure.java.io :only [reader writer]])
   (:import java.lang.ProcessBuilder))
 
+(def current-process (ref nil))
+
 (defn as-struct [^Process process]
     {:out (-> process
               (.getInputStream)
@@ -20,7 +22,20 @@
     (as-struct process)))
 
 (defn play-file [file]
-  (spawn "mplayer" file))
+  (let [quoted-file (str "\"" file "\"")]
+  (dosync (ref-set current-process 
+           (spawn "mplayer" quoted-file)))
+  "done"))
 
-(defn stop [process]
-  (.destroy (:process process)))
+(defn stop []
+  (.destroy (:process @current-process)))
+
+(play-file "http://feeds.soundcloud.com/stream/314132938-lastpodcastontheleft-episode-263-l-ron-hubbard-part-iii-scientology-begins.mp3")
+(stop)
+(println @current-process)
+
+
+(defn foo [a & b]
+  (println a & b))
+
+(foo "1" "2")
