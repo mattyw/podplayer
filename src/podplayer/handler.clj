@@ -7,6 +7,18 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
+(defn application [title & content]
+  (hiccup/html
+         [:head
+          [:title title]
+         ]
+         [:body
+          [:div {:class "container"} 
+           [:a {:href "/"} "Home "]
+           [:a {:href "/stop"} " Stop"]
+           [:hr]
+           ]]
+          [:div {:class "container"} content ]))
 
 (defn home-view []
   (hiccup/html
@@ -23,10 +35,10 @@
 (defn entry-view [title episode] "entry")
 
 (defroutes app-routes
-  (GET "/" [] (home-view))
-  (GET "/feed/:title" [title] (feed-view title))
-  (GET "/play" [file] (play-audio file))
-  (GET "/stop" [] (stop-audio))
+  (GET "/" [] (application "Home" (home-view)))
+  (GET "/feed/:title" [title] (application "Feed" (feed-view title)))
+  (GET "/play" [file] (application "Play" (play-audio file)))
+  (GET "/stop" [] (application "Stop" (stop-audio)))
   (route/not-found "Not Found"))
 
 (def app
