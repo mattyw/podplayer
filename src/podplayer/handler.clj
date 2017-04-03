@@ -4,7 +4,9 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [hiccup.core :as hiccup]
+            [hiccup.form :as hf]
             [ring.middleware.params :refer [wrap-params]]
+            [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
 (defn application [title & content]
@@ -16,6 +18,8 @@
           [:div {:class "container"} 
            [:a {:href "/"} "Home "]
            [:a {:href "/stop"} " Stop"]
+           [:a {:href "/podcasts"} " Podcasts"]
+           [:a {:href "/refresh"} " Refresh"]
            [:hr]
            ]]
           [:div {:class "container"} content ]))
@@ -32,14 +36,28 @@
           [:a {:href (str "/play?file=" (:file x))} "Play Episode"]
           [:p (:description x)]]))))
 
-(defn entry-view [title episode] "entry")
+(defn podcast-view []
+  (hiccup/html
+    (hf/form-to [:post "/update"]
+     [:p "Podcasts:"]
+     (hf/text-area
+      {:rows 20 :cols 100}
+      :podcasts
+      (clojure.string/join "\n" feeds)
+      )
+     (anti-forgery-field)
+     (hf/submit-button "save")
+     )))
 
 (defroutes app-routes
   (GET "/" [] (application "Home" (home-view)))
   (GET "/feed/:title" [title] (application "Feed" (feed-view title)))
   (GET "/play" [file] (application "Play" (play-audio file)))
   (GET "/stop" [] (application "Stop" (stop-audio)))
-  (route/not-found "Not Found"))
+  (GET "/refresh" [] (application "Refresh" (fetch-feeds)))
+  (GET "/podcasts" [] (application "Podcasts" (podcast-view)))
+  (POST "/update" [podcasts]  (str (type (clojure.string/split podcasts #"\s"))))
+  (route/not-found (application "Not Found" "Not Found")))
 
 (def app
   (wrap-params (wrap-defaults app-routes site-defaults)))
