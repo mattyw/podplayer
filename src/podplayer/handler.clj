@@ -6,6 +6,7 @@
             [hiccup.core :as hiccup]
             [hiccup.form :as hf]
             [ring.middleware.params :refer [wrap-params]]
+            [ring.util.response :refer [redirect]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
@@ -43,7 +44,7 @@
      (hf/text-area
       {:rows 20 :cols 100}
       :podcasts
-      (clojure.string/join "\n" feeds)
+      (clojure.string/join "\n" @subscriptions)
       )
      (anti-forgery-field)
      (hf/submit-button "save")
@@ -56,7 +57,10 @@
   (GET "/stop" [] (application "Stop" (stop-audio)))
   (GET "/refresh" [] (application "Refresh" (fetch-feeds)))
   (GET "/podcasts" [] (application "Podcasts" (podcast-view)))
-  (POST "/update" [podcasts]  (str (type (clojure.string/split podcasts #"\s"))))
+  (POST "/update" [podcasts] 
+        (update-feeds (clojure.string/split-lines podcasts))
+        (redirect "/")
+        )
   (route/not-found (application "Not Found" "Not Found")))
 
 (def app

@@ -1,11 +1,11 @@
 (ns podplayer.feeds
   (:use feedparser-clj.core))
 
-(def feeds '("https://changelog.com/gotime/feed"
-            "http://cavecomedyradio.com/pod-series/last-podcast-on-the-left/feed/"))
+(def subscriptions (atom '("https://changelog.com/gotime/feed"
+            "http://cavecomedyradio.com/pod-series/last-podcast-on-the-left/feed/")))
 
 (defn fetch-feeds []
-  (map parse-feed feeds))
+  (map parse-feed @subscriptions))
 
 ; new-episode returns an episode map given a parsed rss feed.
 (defn new-episode [episode]
@@ -21,13 +21,18 @@
   (let [feeds (map parse-feed urls)]
     (apply merge (map new-episodes feeds))))
 
-(def all-feeds (load-feeds feeds))
+(def all-feeds (load-feeds @subscriptions))
 
 (defn get-episodes [title]
   (get all-feeds title))
 
 (defn list-titles []
   (keys all-feeds))
+
+(defn update-feeds [feeds]
+  (do
+    (reset! subscriptions feeds)
+    (println @subscriptions)))
 
 ;all-feeds defines all the feeds
 ;(clojure.pprint/pprint (keys all-feeds))
