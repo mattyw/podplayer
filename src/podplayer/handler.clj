@@ -1,5 +1,7 @@
 (ns podplayer.handler
+  (:gen-class)
   (:use [podplayer.feeds]
+        [org.httpkit.server :only [run-server]]
         [podplayer.audio])
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
@@ -66,3 +68,6 @@
 (def app
   (wrap-params (wrap-defaults app-routes site-defaults)))
 
+(defn -main [& args]
+  (run-server app {:port 8080})
+  (println "podplayer running"))

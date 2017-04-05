@@ -21,13 +21,14 @@
   (let [feeds (map parse-feed urls)]
     (apply merge (map new-episodes feeds))))
 
-(def all-feeds (load-feeds @subscriptions))
+(defn all-feeds []
+  (load-feeds @subscriptions))
 
 (defn get-episodes [title]
-  (get all-feeds title))
+  (get (all-feeds) title))
 
 (defn list-titles []
-  (keys all-feeds))
+  (keys (all-feeds)))
 
 (defn update-feeds [feeds]
   (do
