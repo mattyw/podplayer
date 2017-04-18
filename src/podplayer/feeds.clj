@@ -23,8 +23,10 @@
   (let [feeds (map parse-feed urls)]
     (apply merge (map new-episodes feeds))))
 
+(def feeds (atom (load-feeds @subscriptions)))
+
 (defn all-feeds []
-  (load-feeds @subscriptions))
+  @feeds)
 
 (defn get-episodes [title]
   (get (all-feeds) title))
@@ -32,7 +34,13 @@
 (defn list-titles []
   (keys (all-feeds)))
 
-(defn update-feeds [feeds]
+(defn update-feeds []
+  (do
+    (println "updating feeds")
+    (reset! feeds (load-feeds @subscriptions))
+    (println "updating feeds - done")))
+
+(defn update-subscriptions [feeds]
   (do
     (reset! subscriptions feeds)
     (save-subscriptions)

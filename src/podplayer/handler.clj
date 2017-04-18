@@ -57,10 +57,10 @@
   (GET "/feed/:title" [title] (application "Feed" (feed-view title)))
   (GET "/play" [file] (application "Play" (play-audio file)))
   (GET "/stop" [] (application "Stop" (stop-audio)))
-  (GET "/refresh" [] (application "Refresh" (fetch-feeds)))
+  (GET "/refresh" [] (application "Refresh" (update-feeds)))
   (GET "/podcasts" [] (application "Podcasts" (podcast-view)))
   (POST "/update" [podcasts] 
-        (update-feeds (clojure.string/split-lines podcasts))
+        (update-subscriptions (clojure.string/split-lines podcasts))
         (redirect "/")
         )
   (route/not-found (application "Not Found" "Not Found")))
