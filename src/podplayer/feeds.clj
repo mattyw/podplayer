@@ -1,8 +1,10 @@
 (ns podplayer.feeds
   (:use feedparser-clj.core))
 
-(def subscriptions (atom '("https://changelog.com/gotime/feed"
-            "http://cavecomedyradio.com/pod-series/last-podcast-on-the-left/feed/")))
+(def subscriptions (atom (read-string (slurp "store.dat"))))
+
+(defn save-subscriptions []
+  (spit "store.dat" (pr-str @subscriptions)))
 
 (defn fetch-feeds []
   (map parse-feed @subscriptions))
@@ -33,6 +35,7 @@
 (defn update-feeds [feeds]
   (do
     (reset! subscriptions feeds)
+    (save-subscriptions)
     (println @subscriptions)))
 
 ;all-feeds defines all the feeds
